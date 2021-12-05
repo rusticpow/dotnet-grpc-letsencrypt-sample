@@ -11,11 +11,22 @@ public class GreeterService : Greeter.GreeterBase
         _logger = logger;
     }
 
-    public override Task<HelloReply> SayHello(HelloRequest request, ServerCallContext context)
+    public override async Task SayHello(HelloRequest request, IServerStreamWriter<HelloReply> responseStream, ServerCallContext context)
     {
-        return Task.FromResult(new HelloReply
+        int counter = 0;
+        while (true)
         {
-            Message = "Hello " + request.Name
-        });
+            if (context.Status.StatusCode != StatusCode.OK)
+            {
+                return;
+            }
+
+            await responseStream.WriteAsync(new HelloReply
+            {
+                Message = $"Hello: {request.Name} - " + counter
+            });
+            counter++;
+            await Task.Delay(1000);
+        }
     }
 }
