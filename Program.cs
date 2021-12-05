@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.AspNetCore.Server.Kestrel.Https;
 using net_grpc_letsencrypt.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,11 +9,19 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddGrpc();
+builder.Services.AddLettuceEncrypt();
 
 builder.WebHost.ConfigureKestrel(options =>
 {
-    // Setup a HTTP/2 endpoint without TLS.
-    options.ListenLocalhost(5000, o => o.Protocols = HttpProtocols.Http2);
+    var appServices = options.ApplicationServices;
+    options.ConfigureHttpsDefaults(h =>
+    {
+        h.ClientCertificateMode = ClientCertificateMode.RequireCertificate;
+        h.UseLettuceEncrypt(appServices);
+    });
+    // options.Lis
+    // // Setup a HTTP/2 endpoint without TLS.
+    // options.ListenLocalhost(5000, o => o.Protocols = HttpProtocols.Http2);
 });
 
 var app = builder.Build();
