@@ -1,0 +1,13 @@
+﻿{
+  "profiles": {
+    "net-grpc-letsencrypt": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "applicationUrl": "http://localhost:5137;https://localhost:7093",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
